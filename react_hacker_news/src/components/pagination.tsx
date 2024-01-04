@@ -1,10 +1,22 @@
 import TablePagination from "@mui/material/TablePagination";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-export default function MyTablePagination() {
-  const [page, setPage] = useState(2);
+const MyTablePagination = ({
+  setPageInfo,
+  maxLen,
+}: {
+  setPageInfo: Dispatch<SetStateAction<[number, number]>>;
+  maxLen: number;
+}) => {
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  useEffect(() => {
+    setPageInfo([page, rowsPerPage]);
+  }, [page, rowsPerPage, setPageInfo]);
+
+  // TODO: this should throw back the information to partent
+  // which page are we on
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
@@ -12,6 +24,8 @@ export default function MyTablePagination() {
     setPage(newPage);
   };
 
+  // TODO: this should throw back the information to partent
+  // how many items are on a page
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -22,11 +36,13 @@ export default function MyTablePagination() {
   return (
     <TablePagination
       component="div"
-      count={100}
+      count={maxLen}
       page={page}
       onPageChange={handleChangePage}
       rowsPerPage={rowsPerPage}
       onRowsPerPageChange={handleChangeRowsPerPage}
     />
   );
-}
+};
+
+export default MyTablePagination;
