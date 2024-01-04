@@ -1,13 +1,17 @@
 import { List, ListItem, ListItemText } from "@mui/material";
 import { useEffect, useState } from "react";
 import getNewest from "../api/getNewest";
-import getPosts, { HackerNewsStory } from "../api/getPost";
+import getPosts, { HackerNewsStory } from "../api/getPosts";
 import MyTablePagination from "./pagination";
 import convertPageInfo from "./utils/convertPageInfo";
 
 const Home = () => {
   const [myIDS, setMyIDS] = useState<number[]>([]);
   const [posts, setPosts] = useState<HackerNewsStory[] | null>(null);
+  const [renderedPosts, setRenderedPosts] = useState<HackerNewsStory[] | []>(
+    [],
+  );
+
   const [pageInfo, setPageInfo] = useState<[number, number]>([0, 10]);
 
   useEffect(() => {
@@ -15,19 +19,32 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    console.log("posts", posts);
+    getPosts(myIDS.slice(0, 10)).then((fetchedPosts) => {
+      fetchedPosts ? setRenderedPosts(fetchedPosts) : setRenderedPosts([]);
+    });
+  }, [myIDS]);
+
+  useEffect(() => {
+    getPosts(myIDS).then((fetchedPosts) => {
+      const fetchedPostsData = fetchedPosts ? fetchedPosts : [];
+      setPosts(fetchedPostsData);
+    });
+  }, [myIDS]);
+
+  useEffect(() => {
+    console.log("posst: ", posts);
   }, [posts]);
 
   useEffect(() => {
-    getPosts(myIDS.slice(...pageInfo)).then((fetchedPosts) =>
-      setPosts(fetchedPosts),
-    );
-  }, [myIDS, pageInfo]);
+    setRenderedPosts(posts?.slice(...convertPageInfo(pageInfo)) || []);
+    console.log("posts: ", posts);
+    console.log("rendered p: ", renderedPosts);
+  }, [pageInfo]);
 
   return (
     <>
       <List>
-        {posts?.map((post) => (
+        {renderedPosts?.map((post) => (
           <ListItem>
             <ListItemText
               primary={post.title}
@@ -39,7 +56,10 @@ const Home = () => {
           </ListItem>
         ))}
       </List>
-      <MyTablePagination setPageInfo={setPageInfo} maxLen={myIDS.length} />
+      <MyTablePagination
+        setPageInfo={setPageInfo}
+        maxLen={posts?.length || renderedPosts.length}
+      />
     </>
   );
 };

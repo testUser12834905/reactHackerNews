@@ -13,7 +13,7 @@ export type HackerNewsStory = {
 const getPosts = async (ids: number[]): Promise<HackerNewsStory[] | null> => {
   let posts: HackerNewsStory[] = [];
 
-  for (const id of ids) {
+  const promises = ids.map(async (id) => {
     try {
       const res = await fetch(
         `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
@@ -23,8 +23,9 @@ const getPosts = async (ids: number[]): Promise<HackerNewsStory[] | null> => {
     } catch (error) {
       console.error("error occured: ", error);
     }
-  }
-  return posts ? posts : null;
+  });
+
+  return Promise.all(promises).then(() => posts);
 };
 
 export default getPosts;
