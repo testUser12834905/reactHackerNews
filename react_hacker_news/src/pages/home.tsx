@@ -10,8 +10,8 @@ import {
 import { useEffect, useState } from "react";
 import getNewest from "../api/getNewest";
 import getPosts, { HackerNewsStory } from "../api/getPosts";
-import MyTablePagination from "./pagination";
-import convertPageInfo from "./utils/convertPageInfo";
+import MyTablePagination from "../components/pagination";
+import convertPageInfo from "../components/utils/convertPageInfo";
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
