@@ -1,6 +1,6 @@
-import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import MyTablePagination from "./components/pagination";
 
 const App = () => {
   return (
@@ -18,6 +18,7 @@ const App = () => {
         >
           Learn React
         </a>
+        <MyTablePagination />
       </header>
     </div>
   );
