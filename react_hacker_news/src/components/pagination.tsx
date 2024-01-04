@@ -15,8 +15,6 @@ const MyTablePagination = ({
     setPageInfo([page, rowsPerPage]);
   }, [page, rowsPerPage, setPageInfo]);
 
-  // TODO: this should throw back the information to partent
-  // which page are we on
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
@@ -24,8 +22,6 @@ const MyTablePagination = ({
     setPage(newPage);
   };
 
-  // TODO: this should throw back the information to partent
-  // how many items are on a page
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
