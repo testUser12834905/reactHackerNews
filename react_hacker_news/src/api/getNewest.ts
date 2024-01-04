@@ -4,7 +4,7 @@ const getNewest = async (): Promise<Array<number>> => {
       "https://hacker-news.firebaseio.com/v0/newstories.json",
     );
     const data: Array<number> = await res.json();
-    return data;
+    return data.sort((a, b) => a + b);
   } catch (error) {
     console.error("error occured: ", error);
     return [];

@@ -1,5 +1,12 @@
 import Launch from "@mui/icons-material/Launch";
-import { IconButton, Link, List, ListItem, ListItemText } from "@mui/material";
+import {
+  CircularProgress,
+  IconButton,
+  Link,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import getNewest from "../api/getNewest";
 import getPosts, { HackerNewsStory } from "../api/getPosts";
@@ -7,11 +14,13 @@ import MyTablePagination from "./pagination";
 import convertPageInfo from "./utils/convertPageInfo";
 
 const Home = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [myIDS, setMyIDS] = useState<number[]>([]);
   const [posts, setPosts] = useState<HackerNewsStory[] | []>([]);
   const [renderedPosts, setRenderedPosts] = useState<HackerNewsStory[] | []>(
     [],
   );
+
   const [bufferPosts, setBufferPosts] = useState<HackerNewsStory[] | []>([]);
 
   const [pageInfo, setPageInfo] = useState<[number, number]>([0, 10]);
@@ -44,7 +53,11 @@ const Home = () => {
 
   // BUG: if row per page is switched before all items are loaded it breaks
   useEffect(() => {
+    if (bufferPosts.length !== 0) {
+      setIsLoading(false);
+    }
     if (posts.length > 0) {
+      setIsLoading(false);
       setRenderedPosts(posts?.slice(...convertPageInfo(pageInfo)) || []);
     } else {
       setRenderedPosts(bufferPosts?.slice(...convertPageInfo(pageInfo)) || []);
@@ -53,28 +66,30 @@ const Home = () => {
 
   return (
     <>
+      {isLoading && <CircularProgress />}
       <List>
-        {renderedPosts?.map((post) => (
-          <ListItem
-            secondaryAction={
-              <IconButton edge="end">
-                <Link
-                  color="inherit"
-                  href={post.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Launch />
-                </Link>
-              </IconButton>
-            }
-          >
-            <ListItemText
-              primary={post.title}
-              secondary={new Date(post.time * 1000).toLocaleString("en-GB")}
-            />
-          </ListItem>
-        ))}
+        {!isLoading &&
+          renderedPosts?.map((post) => (
+            <ListItem
+              secondaryAction={
+                <IconButton edge="end">
+                  <Link
+                    color="inherit"
+                    href={post.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Launch />
+                  </Link>
+                </IconButton>
+              }
+            >
+              <ListItemText
+                primary={post.title}
+                secondary={new Date(post.time * 1000).toLocaleString("en-GB")}
+              />
+            </ListItem>
+          ))}
       </List>
       <MyTablePagination
         setPageInfo={setPageInfo}
