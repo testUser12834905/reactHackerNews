@@ -10,7 +10,7 @@ export type HackerNewsStory = {
   url: string; // Link
 };
 
-const getPosts = async (ids: number[]): Promise<HackerNewsStory[] | null> => {
+const getPosts = async (ids: number[]): Promise<HackerNewsStory[] | []> => {
   let posts: HackerNewsStory[] = [];
 
   const promises = ids.map(async (id) => {
