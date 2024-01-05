@@ -11,7 +11,8 @@ import { useEffect, useState } from "react";
 import getNewest from "../api/getNewest";
 import getPosts, { HackerNewsStory } from "../api/getPosts";
 import ListNewsItems from "../components/ListNewsItem";
-import MyTablePagination from "../components/pagination";
+import LoadSpinner from "../components/LoadSpinner";
+import MyTablePagination from "../components/Pagination";
 import convertPageInfo from "../components/utils/convertPageInfo";
 
 const Home = () => {
@@ -52,7 +53,6 @@ const Home = () => {
     console.log("posst: ", posts);
   }, [bufferPosts, myIDS, posts]);
 
-  // BUG: if row per page is switched before all items are loaded it breaks
   useEffect(() => {
     if (bufferPosts.length !== 0) {
       setIsLoading(false);
@@ -67,7 +67,7 @@ const Home = () => {
 
   return (
     <>
-      {isLoading && <CircularProgress />}
+      <LoadSpinner isLoading={isLoading} />
       <List>
         {!isLoading &&
           renderedPosts?.map((post) => <ListNewsItems postData={post} />)}
