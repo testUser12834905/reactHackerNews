@@ -1,8 +1,8 @@
 export type HackerNewsStory = {
   by: string; // Author
-  descendants: number;
+  descendants: number; // total comments
   id: number;
-  kids: number[];
+  kids: number[]; // comment ids
   score: number;
   time: number;
   title: string; // Title
