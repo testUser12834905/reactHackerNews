@@ -1,12 +1,15 @@
 import { Launch } from "@mui/icons-material";
 import { ListItem, IconButton, Link, ListItemText } from "@mui/material";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { HackerNewsReturnType } from "../api/getItems";
 import PostComments from "./PostComments";
 
 const ListNewsItems = ({
   postData: post,
+  setIsCommentsOpen,
 }: {
   postData: HackerNewsReturnType;
+  setIsCommentsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const itemDisplay = (date: Date) => {
     const twoHrInPast = new Date(new Date().getTime() - 2 * 60 * 60 * 1000);
@@ -41,7 +44,11 @@ const ListNewsItems = ({
     }
 
     return (
-      <PostComments commentIDs={commentIDs} buttonContent={buttonContent} />
+      <PostComments
+        commentIDs={commentIDs}
+        buttonContent={buttonContent}
+        setIsCommentsOpen={setIsCommentsOpen}
+      />
     );
   };
 

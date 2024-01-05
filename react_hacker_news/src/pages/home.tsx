@@ -15,6 +15,8 @@ const Home = () => {
     HackerNewsReturnType[] | []
   >([]);
 
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+
   const [bufferPosts, setBufferPosts] = useState<HackerNewsReturnType[] | []>(
     [],
   );
@@ -48,20 +50,25 @@ const Home = () => {
     if (bufferPosts.length !== 0) {
       setIsLoading(false);
     }
-    if (posts.length > 0) {
-      setIsLoading(false);
+    if (posts.length > 0 && !isCommentsOpen) {
       setRenderedPosts(posts?.slice(...convertPageInfo(pageInfo)) || []);
+      setIsLoading(false);
     } else {
       setRenderedPosts(bufferPosts?.slice(...convertPageInfo(pageInfo)) || []);
     }
-  }, [pageInfo, posts, bufferPosts]);
+  }, [pageInfo, posts, bufferPosts, isCommentsOpen]);
 
   return (
     <>
       <LoadSpinner isLoading={isLoading} />
       <List>
         {!isLoading &&
-          renderedPosts?.map((post) => <ListNewsItems postData={post} />)}
+          renderedPosts?.map((post) => (
+            <ListNewsItems
+              postData={post}
+              setIsCommentsOpen={setIsCommentsOpen}
+            />
+          ))}
       </List>
       <MyTablePagination
         setPageInfo={setPageInfo}
