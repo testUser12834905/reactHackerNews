@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import getNewest from "../api/getNewest";
 import getPosts, { HackerNewsStory } from "../api/getPosts";
+import ListNewsItems from "../components/ListNewsItem";
 import MyTablePagination from "../components/pagination";
 import convertPageInfo from "../components/utils/convertPageInfo";
 
@@ -69,27 +70,7 @@ const Home = () => {
       {isLoading && <CircularProgress />}
       <List>
         {!isLoading &&
-          renderedPosts?.map((post) => (
-            <ListItem
-              secondaryAction={
-                <IconButton edge="end">
-                  <Link
-                    color="inherit"
-                    href={post.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Launch />
-                  </Link>
-                </IconButton>
-              }
-            >
-              <ListItemText
-                primary={post.title}
-                secondary={new Date(post.time * 1000).toLocaleString("en-GB")}
-              />
-            </ListItem>
-          ))}
+          renderedPosts?.map((post) => <ListNewsItems postData={post} />)}
       </List>
       <MyTablePagination
         setPageInfo={setPageInfo}
