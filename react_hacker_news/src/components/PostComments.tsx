@@ -13,6 +13,7 @@ type Props = {
   buttonContent: string;
 };
 
+// BUG: if comments are opened before all the posts are loaded the weird thing happen
 const PostComments = ({ commentIDs, buttonContent }: Props) => {
   const [open, setOpen] = useState(false);
   const [commentsData, setCommentsData] = useState<HackerNewsReturnType[] | []>(
@@ -52,7 +53,10 @@ const PostComments = ({ commentIDs, buttonContent }: Props) => {
         <List>
           {commentsData.map((comment, index) => (
             <ListItem key={index}>
-              <ListItemText primary={comment.by} />
+              <ListItemText
+                primary={comment.text}
+                secondary={`by ${comment.by}`}
+              />
             </ListItem>
           ))}
         </List>
