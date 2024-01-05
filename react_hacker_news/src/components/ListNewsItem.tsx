@@ -1,30 +1,13 @@
 import { Launch } from "@mui/icons-material";
-import {
-  ListItem,
-  IconButton,
-  Link,
-  ListItemText,
-  Button,
-} from "@mui/material";
-import { HackerNewsStory } from "../api/getPosts";
+import { ListItem, IconButton, Link, ListItemText } from "@mui/material";
+import { HackerNewsReturnType } from "../api/getItems";
+import PostComments from "./PostComments";
 
-const ListNewsItems = ({ postData: post }: { postData: HackerNewsStory }) => {
-  const commentDisplay = (nrOfComments: number) => {
-    let buttonContent;
-    if (post.descendants === 0) {
-      return <></>;
-    } else if (post.descendants === 1) {
-      buttonContent = `| ${nrOfComments} comment`;
-    } else {
-      buttonContent = `| ${nrOfComments} comments`;
-    }
-    return (
-      <Button color="inherit" size="small">
-        {buttonContent}
-      </Button>
-    );
-  };
-
+const ListNewsItems = ({
+  postData: post,
+}: {
+  postData: HackerNewsReturnType;
+}) => {
   const itemDisplay = (date: Date) => {
     const twoHrInPast = new Date(new Date().getTime() - 2 * 60 * 60 * 1000);
 
@@ -42,6 +25,24 @@ const ListNewsItems = ({ postData: post }: { postData: HackerNewsStory }) => {
     } else {
       return calculateTimeElapsed();
     }
+  };
+
+  const commentDisplay = (commentIDs: number[] | undefined) => {
+    const nrOfComments = commentIDs ? commentIDs.length : 0;
+
+    let buttonContent;
+
+    if (nrOfComments === 0 || !commentIDs) {
+      return <></>;
+    } else if (nrOfComments === 1) {
+      buttonContent = `| ${nrOfComments} comment`;
+    } else {
+      buttonContent = `| ${nrOfComments} comments`;
+    }
+
+    return (
+      <PostComments commentIDs={commentIDs} buttonContent={buttonContent} />
+    );
   };
 
   return (
@@ -65,7 +66,7 @@ const ListNewsItems = ({ postData: post }: { postData: HackerNewsStory }) => {
           secondary={
             <>
               {itemDisplay(new Date(post.time * 1000))}
-              {commentDisplay(post.descendants)}
+              {commentDisplay(post?.kids)}
             </>
           }
         />

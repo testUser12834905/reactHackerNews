@@ -1,24 +1,27 @@
-export type HackerNewsStory = {
+export type HackerNewsReturnType = {
   by: string; // Author
   descendants: number; // total comments
   id: number;
-  kids: number[]; // comment ids
-  score: number;
+  kids?: number[]; // comment ids
+  score?: number;
   time: number;
   title: string; // Title
+  text?: string; // for comments
   type: string;
   url: string; // Link
 };
 
-const getPosts = async (ids: number[]): Promise<HackerNewsStory[] | []> => {
-  let posts: HackerNewsStory[] = [];
+const getItems = async (
+  ids: number[],
+): Promise<HackerNewsReturnType[] | []> => {
+  let posts: HackerNewsReturnType[] = [];
 
   const promises = ids.map(async (id) => {
     try {
       const res = await fetch(
         `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
       );
-      const post: HackerNewsStory = await res.json();
+      const post: HackerNewsReturnType = await res.json();
       posts = [...posts, post];
     } catch (error) {
       console.error("error occurred: ", error);
@@ -30,4 +33,4 @@ const getPosts = async (ids: number[]): Promise<HackerNewsStory[] | []> => {
   return posts;
 };
 
-export default getPosts;
+export default getItems;

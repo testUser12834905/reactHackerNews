@@ -1,7 +1,7 @@
 import { List } from "@mui/material";
 import { useEffect, useState } from "react";
 import getNewest from "../api/getNewest";
-import getPosts, { HackerNewsStory } from "../api/getPosts";
+import getItems, { HackerNewsReturnType } from "../api/getItems";
 import ListNewsItems from "../components/ListNewsItem";
 import LoadSpinner from "../components/LoadSpinner";
 import MyTablePagination from "../components/Pagination";
@@ -10,12 +10,14 @@ import convertPageInfo from "../components/utils/convertPageInfo";
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [myIDS, setMyIDS] = useState<number[]>([]);
-  const [posts, setPosts] = useState<HackerNewsStory[] | []>([]);
-  const [renderedPosts, setRenderedPosts] = useState<HackerNewsStory[] | []>(
+  const [posts, setPosts] = useState<HackerNewsReturnType[] | []>([]);
+  const [renderedPosts, setRenderedPosts] = useState<
+    HackerNewsReturnType[] | []
+  >([]);
+
+  const [bufferPosts, setBufferPosts] = useState<HackerNewsReturnType[] | []>(
     [],
   );
-
-  const [bufferPosts, setBufferPosts] = useState<HackerNewsStory[] | []>([]);
 
   const [pageInfo, setPageInfo] = useState<[number, number]>([0, 10]);
 
@@ -25,11 +27,11 @@ const Home = () => {
 
   const loadBuffer = 50;
   useEffect(() => {
-    getPosts(myIDS.slice(0, loadBuffer)).then((fetchedPosts) => {
+    getItems(myIDS.slice(0, loadBuffer)).then((fetchedPosts) => {
       setBufferPosts(fetchedPosts);
     });
 
-    getPosts(myIDS.slice(loadBuffer)).then((fetchedPosts) => {
+    getItems(myIDS.slice(loadBuffer)).then((fetchedPosts) => {
       setPosts(fetchedPosts);
     });
   }, [myIDS]);
