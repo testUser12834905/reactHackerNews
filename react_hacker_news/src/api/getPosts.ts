@@ -21,11 +21,13 @@ const getPosts = async (ids: number[]): Promise<HackerNewsStory[] | []> => {
       const post: HackerNewsStory = await res.json();
       posts = [...posts, post];
     } catch (error) {
-      console.error("error occured: ", error);
+      console.error("error occurred: ", error);
     }
   });
 
-  return Promise.all(promises).then(() => posts);
+  await Promise.all(promises);
+  posts.sort((a, b) => b.time - a.time);
+  return posts;
 };
 
 export default getPosts;

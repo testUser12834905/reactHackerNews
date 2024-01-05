@@ -31,7 +31,7 @@ const ListNewsItems = ({ postData: post }: { postData: HackerNewsStory }) => {
     const calculateTimeElapsed = () => {
       const timeInMins = (new Date().getTime() - date.getTime()) / 1000 / 60;
       if (timeInMins < 60) {
-        return `${Math.round(timeInMins)} minutes ago`;
+        return `${Math.ceil(timeInMins)} minutes ago`;
       } else {
         return `${Math.round(timeInMins / 60)} hours ago`;
       }
