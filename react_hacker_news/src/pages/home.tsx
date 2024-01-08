@@ -6,57 +6,58 @@ import ListNewsItems from "../components/ListNewsItem";
 import LoadSpinner from "../components/LoadSpinner";
 import MyTablePagination from "../components/Pagination";
 import convertPageInfo from "../components/utils/convertPageInfo";
+import useGetNewestPosts from "../hooks/useGetNewestPosts";
+import useLoadPosts from "../hooks/useLoadPosts";
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [myIDS, setMyIDS] = useState<number[]>([]);
-  const [posts, setPosts] = useState<HackerNewsReturnType[] | []>([]);
+  const [myIDS, setIDs] = useState<number[]>([]);
   const [renderedPosts, setRenderedPosts] = useState<
     HackerNewsReturnType[] | []
   >([]);
 
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-
-  const [bufferPosts, setBufferPosts] = useState<HackerNewsReturnType[] | []>(
+  const [preloadPosts, setPreloadPosts] = useState<HackerNewsReturnType[] | []>(
+    [],
+  );
+  const [loadedPosts, setLoadedPosts] = useState<HackerNewsReturnType[] | []>(
     [],
   );
 
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+
   const [pageInfo, setPageInfo] = useState<[number, number]>([0, 10]);
 
-  useEffect(() => {
-    getNewest().then((data) => setMyIDS(data));
-  }, []);
+  useGetNewestPosts({ setIDs: setIDs });
 
-  const loadBuffer = 50;
-  useEffect(() => {
-    getItems(myIDS.slice(0, loadBuffer)).then((fetchedPosts) => {
-      setBufferPosts(fetchedPosts);
-    });
-
-    getItems(myIDS.slice(loadBuffer)).then((fetchedPosts) => {
-      setPosts(fetchedPosts);
-    });
-  }, [myIDS]);
+  useLoadPosts({
+    setLoaded: setLoadedPosts,
+    setPreload: setPreloadPosts,
+    IDs: myIDS,
+  });
 
   useEffect(() => {
-    if (posts.length > 0 && posts.length + bufferPosts.length <= myIDS.length) {
-      setPosts([...bufferPosts, ...posts]);
+    if (
+      preloadPosts.length > 0 &&
+      preloadPosts.length + loadedPosts.length <= myIDS.length
+    ) {
+      setPreloadPosts([...loadedPosts, ...preloadPosts]);
     }
 
-    console.log("posst: ", posts);
-  }, [bufferPosts, myIDS, posts]);
+    console.log("posst: ", preloadPosts);
+  }, [loadedPosts, myIDS, preloadPosts]);
 
+  // BUG: after page 50 if comments are opened this breaks
   useEffect(() => {
-    if (bufferPosts.length !== 0) {
+    if (loadedPosts.length !== 0) {
       setIsLoading(false);
     }
-    if (posts.length > 0 && !isCommentsOpen) {
-      setRenderedPosts(posts?.slice(...convertPageInfo(pageInfo)) || []);
+    if (preloadPosts.length > 0 && !isCommentsOpen) {
+      setRenderedPosts(preloadPosts?.slice(...convertPageInfo(pageInfo)) || []);
       setIsLoading(false);
     } else {
-      setRenderedPosts(bufferPosts?.slice(...convertPageInfo(pageInfo)) || []);
+      setRenderedPosts(loadedPosts?.slice(...convertPageInfo(pageInfo)) || []);
     }
-  }, [pageInfo, posts, bufferPosts, isCommentsOpen]);
+  }, [pageInfo, preloadPosts, loadedPosts, isCommentsOpen]);
 
   return (
     <>
@@ -72,7 +73,7 @@ const Home = () => {
       </List>
       <MyTablePagination
         setPageInfo={setPageInfo}
-        maxLen={posts?.length || bufferPosts.length}
+        maxLen={preloadPosts?.length || loadedPosts.length}
       />
     </>
   );
