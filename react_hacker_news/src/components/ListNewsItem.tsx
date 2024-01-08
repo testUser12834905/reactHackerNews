@@ -1,6 +1,6 @@
 import { Launch } from "@mui/icons-material";
 import { ListItem, IconButton, Link, ListItemText } from "@mui/material";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { HackerNewsReturnType } from "../api/getItems";
 import PostComments from "./PostComments";
 
