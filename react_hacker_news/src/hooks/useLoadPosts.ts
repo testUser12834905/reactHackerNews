@@ -7,9 +7,9 @@ type props = {
   IDs: number[];
 };
 
-const useLoadPosts = ({ setLoaded, setPreload, IDs }: props) => {
+const useLoadPostsWithPreload = ({ setLoaded, setPreload, IDs }: props) => {
+  const loadBuffer = 50;
   useEffect(() => {
-    const loadBuffer = 50;
     getItems(IDs.slice(0, loadBuffer)).then((fetchedPosts) => {
       setLoaded(fetchedPosts);
     });
@@ -20,4 +20,4 @@ const useLoadPosts = ({ setLoaded, setPreload, IDs }: props) => {
   }, [setLoaded, setPreload, IDs]);
 };
 
-export default useLoadPosts;
+export default useLoadPostsWithPreload;

@@ -5,16 +5,19 @@ import getItems, { HackerNewsReturnType } from "../api/getItems";
 import ListNewsItems from "../components/ListNewsItem";
 import LoadSpinner from "../components/LoadSpinner";
 import MyTablePagination from "../components/Pagination";
-import convertPageInfo from "../components/utils/convertPageInfo";
+import paginationRules from "../components/utils/convertPageInfo";
 import useGetNewestPosts from "../hooks/useGetNewestPosts";
-import useLoadPosts from "../hooks/useLoadPosts";
+import useLoadPostsWithPreload from "../hooks/useLoadPosts";
+import useCombineLoadedWithPreloaded from "../hooks/useCombineLoadedWithPreloaded";
+import usePagination from "@mui/material/usePagination/usePagination";
+import useSetVisible from "../hooks/usePagination";
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [myIDS, setIDs] = useState<number[]>([]);
-  const [renderedPosts, setRenderedPosts] = useState<
-    HackerNewsReturnType[] | []
-  >([]);
+  const [postIDs, setPostIDs] = useState<number[]>([]);
+  const [visiblePosts, setVisiblePosts] = useState<HackerNewsReturnType[] | []>(
+    [],
+  );
 
   const [preloadPosts, setPreloadPosts] = useState<HackerNewsReturnType[] | []>(
     [],
@@ -27,44 +30,36 @@ const Home = () => {
 
   const [pageInfo, setPageInfo] = useState<[number, number]>([0, 10]);
 
-  useGetNewestPosts({ setIDs: setIDs });
+  useGetNewestPosts({ setIDs: setPostIDs });
 
-  useLoadPosts({
+  useLoadPostsWithPreload({
     setLoaded: setLoadedPosts,
     setPreload: setPreloadPosts,
-    IDs: myIDS,
+    IDs: postIDs,
   });
 
-  useEffect(() => {
-    if (
-      preloadPosts.length > 0 &&
-      preloadPosts.length + loadedPosts.length <= myIDS.length
-    ) {
-      setPreloadPosts([...loadedPosts, ...preloadPosts]);
-    }
+  useCombineLoadedWithPreloaded({
+    loaded: loadedPosts,
+    preload: preloadPosts,
+    setLoaded: setLoadedPosts,
+    length: postIDs.length,
+  });
 
-    console.log("posst: ", preloadPosts);
-  }, [loadedPosts, myIDS, preloadPosts]);
-
-  // BUG: after page 50 if comments are opened this breaks
-  useEffect(() => {
-    if (loadedPosts.length !== 0) {
-      setIsLoading(false);
-    }
-    if (preloadPosts.length > 0 && !isCommentsOpen) {
-      setRenderedPosts(preloadPosts?.slice(...convertPageInfo(pageInfo)) || []);
-      setIsLoading(false);
-    } else {
-      setRenderedPosts(loadedPosts?.slice(...convertPageInfo(pageInfo)) || []);
-    }
-  }, [pageInfo, preloadPosts, loadedPosts, isCommentsOpen]);
+  useSetVisible({
+    loaded: loadedPosts,
+    preload: preloadPosts,
+    isCommentsOpen,
+    pageInfo,
+    setIsLoading,
+    setVisible: setVisiblePosts,
+  });
 
   return (
     <>
       <LoadSpinner isLoading={isLoading} />
       <List>
         {!isLoading &&
-          renderedPosts?.map((post) => (
+          visiblePosts?.map((post) => (
             <ListNewsItems
               postData={post}
               setIsCommentsOpen={setIsCommentsOpen}
@@ -73,7 +68,7 @@ const Home = () => {
       </List>
       <MyTablePagination
         setPageInfo={setPageInfo}
-        maxLen={preloadPosts?.length || loadedPosts.length}
+        maxLen={loadedPosts.length}
       />
     </>
   );
