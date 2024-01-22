@@ -1,14 +1,14 @@
 import { Launch } from "@mui/icons-material";
 import { ListItem, IconButton, Link, ListItemText } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
-import { HackerNewsReturnType } from "../api/getItems";
+import { HackerNewsPostType } from "../api/getItems";
 import PostComments from "./PostComments";
 
 const ListNewsItems = ({
   postData: post,
   setIsCommentsOpen,
 }: {
-  postData: HackerNewsReturnType;
+  postData: HackerNewsPostType;
   setIsCommentsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const itemDisplay = (date: Date) => {
@@ -35,18 +35,20 @@ const ListNewsItems = ({
 
     let buttonContent;
 
-    if (nrOfComments === 0 || !commentIDs) {
-      return <></>;
-    } else if (nrOfComments === 1) {
-      buttonContent = `| ${nrOfComments} comment`;
-    } else {
-      buttonContent = `| ${nrOfComments} comments`;
-    }
+    (function handleWhatIsDisplayed() {
+      if (nrOfComments === 0 || !commentIDs) {
+        return <></>;
+      } else if (nrOfComments === 1) {
+        buttonContent = `| ${nrOfComments} comment`;
+      } else {
+        buttonContent = `| ${nrOfComments} comments`;
+      }
+    })();
 
     return (
       <PostComments
-        commentIDs={commentIDs}
-        buttonContent={buttonContent}
+        commentIDs={commentIDs ?? []}
+        buttonContent={buttonContent ?? ""}
         setIsCommentsOpen={setIsCommentsOpen}
       />
     );

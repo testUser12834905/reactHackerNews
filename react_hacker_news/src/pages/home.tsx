@@ -1,30 +1,25 @@
 import { List } from "@mui/material";
-import { useEffect, useState } from "react";
-import getNewest from "../api/getNewest";
-import getItems, { HackerNewsReturnType } from "../api/getItems";
+import { useState } from "react";
+import { HackerNewsPostType } from "../api/getItems";
 import ListNewsItems from "../components/ListNewsItem";
 import LoadSpinner from "../components/LoadSpinner";
 import MyTablePagination from "../components/Pagination";
-import paginationRules from "../components/utils/convertPageInfo";
+import useCombineLoadedWithPreloaded from "../hooks/useCombineLoadedWithPreloaded";
 import useGetNewestPosts from "../hooks/useGetNewestPosts";
 import useLoadPostsWithPreload from "../hooks/useLoadPosts";
-import useCombineLoadedWithPreloaded from "../hooks/useCombineLoadedWithPreloaded";
-import usePagination from "@mui/material/usePagination/usePagination";
 import useSetVisible from "../hooks/usePagination";
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [postIDs, setPostIDs] = useState<number[]>([]);
-  const [visiblePosts, setVisiblePosts] = useState<HackerNewsReturnType[] | []>(
+  const [visiblePosts, setVisiblePosts] = useState<HackerNewsPostType[] | []>(
     [],
   );
 
-  const [preloadPosts, setPreloadPosts] = useState<HackerNewsReturnType[] | []>(
+  const [preloadPosts, setPreloadPosts] = useState<HackerNewsPostType[] | []>(
     [],
   );
-  const [loadedPosts, setLoadedPosts] = useState<HackerNewsReturnType[] | []>(
-    [],
-  );
+  const [loadedPosts, setLoadedPosts] = useState<HackerNewsPostType[] | []>([]);
 
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 

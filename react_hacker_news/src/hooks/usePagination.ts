@@ -1,14 +1,14 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { HackerNewsReturnType } from "../api/getItems";
+import { HackerNewsPostType } from "../api/getItems";
 import paginationRules from "../components/utils/convertPageInfo";
 
 type props = {
-  loaded: HackerNewsReturnType[];
-  preload: HackerNewsReturnType[];
+  loaded: HackerNewsPostType[];
+  preload: HackerNewsPostType[];
   isCommentsOpen: boolean;
   pageInfo: [number, number];
   setIsLoading: Dispatch<SetStateAction<boolean>>;
-  setVisible: Dispatch<SetStateAction<HackerNewsReturnType[]>>;
+  setVisible: Dispatch<SetStateAction<HackerNewsPostType[]>>;
 };
 const useSetVisible = ({
   loaded,

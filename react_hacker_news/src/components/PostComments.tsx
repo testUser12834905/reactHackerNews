@@ -5,7 +5,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import getItems, { HackerNewsReturnType } from "../api/getItems";
+import getItems, { HackerNewsCommentType } from "../api/getItems";
 import LoadSpinner from "./LoadSpinner";
 
 type Props = {
@@ -21,14 +21,14 @@ const PostComments = ({
   setIsCommentsOpen,
 }: Props) => {
   const [open, setOpen] = useState(false);
-  const [commentsData, setCommentsData] = useState<HackerNewsReturnType[] | []>(
-    [],
-  );
+  const [commentsData, setCommentsData] = useState<
+    HackerNewsCommentType[] | []
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (open) {
-      getItems(commentIDs).then((fetchedComments) => {
+      getItems<HackerNewsCommentType>(commentIDs).then((fetchedComments) => {
         setCommentsData(fetchedComments);
         setIsLoading(false);
       });

@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { HackerNewsReturnType } from "../api/getItems";
+import { HackerNewsPostType } from "../api/getItems";
 
 type props = {
-  loaded: HackerNewsReturnType[];
-  preload: HackerNewsReturnType[];
+  loaded: HackerNewsPostType[];
+  preload: HackerNewsPostType[];
   length: number;
-  setLoaded: Dispatch<SetStateAction<HackerNewsReturnType[]>>;
+  setLoaded: Dispatch<SetStateAction<HackerNewsPostType[]>>;
 };
 
 const useCombineLoadedWithPreloaded = ({
