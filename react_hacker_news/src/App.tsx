@@ -12,6 +12,7 @@ const App = () => {
           <h2>HackerNews</h2>
           <Routes>
             <Route path="" element={<Home />} />
+            <Route path="home" element={<Home />} />
           </Routes>
         </header>
       </div>
